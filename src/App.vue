@@ -1,13 +1,37 @@
 <script setup lang="ts">
-import { Add, LanguageOutline, SearchOutline } from '@vicons/ionicons5'
+import Tree from '@/pages/Tree/index.vue'
+import { CreateType, RecordType } from '@/types'
+import localforage from '@/utils/localforage'
+import {
+  Add,
+  FolderOutline,
+  LanguageOutline,
+  Mic,
+  SearchOutline
+} from '@vicons/ionicons5'
+import dayjs from 'dayjs'
+import { DropdownProps } from 'naive-ui'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-// import Tree from '@/pages/Tree'
-import { DropdownProps } from 'naive-ui'
-import Tree from './pages/Tree/index.vue'
+import { createNewRecord, renderIcon } from './utils'
 
 const router = useRouter()
 const { t, locale } = useI18n({ useScope: 'global' })
+
+const records = ref<RecordType[]>([])
+
+const getLocalRecord = async () => {
+  const keys = await localforage.keys()
+  const list = (await Promise.all(
+    keys.map((key) => localforage.getItem(key))
+  )) as RecordType[]
+
+  records.value = list
+}
+
+// 读取本地记录数据
+getLocalRecord()
 
 const languageOptions: DropdownProps['options'] = [
   {
@@ -22,6 +46,38 @@ const languageOptions: DropdownProps['options'] = [
 
 const handleLanguageChange = (value: string) => {
   locale.value = value
+}
+
+const createOptions: DropdownProps['options'] = [
+  {
+    label: '新建情绪分析',
+    key: CreateType.NewRecord,
+    icon: renderIcon(Mic)
+  },
+  {
+    label: '新建文件夹',
+    key: CreateType.NewFolder,
+    icon: renderIcon(FolderOutline)
+  }
+]
+
+const handleCreateSelect = async (value: CreateType) => {
+  switch (value) {
+    case CreateType.NewRecord: {
+      router.push({ name: 'NewUpload' })
+      const record = createNewRecord(CreateType.NewRecord)
+      const time = dayjs(record.createdAt).format('YYYY-MM-DD HH:mm:ss')
+      await localforage.setItem(time, record)
+      break
+    }
+    case CreateType.NewFolder: {
+      const folder = createNewRecord(CreateType.NewFolder)
+      const time = dayjs(folder.createdAt).format('YYYY-MM-DD HH:mm:ss')
+      await localforage.setItem(time, folder)
+      break
+    }
+  }
+  await getLocalRecord()
 }
 </script>
 
@@ -64,49 +120,36 @@ const handleLanguageChange = (value: string) => {
       <n-layout-sider
         collapse-mode="transform"
         :collapsed-width="0"
-        :width="240"
+        :width="360"
         show-trigger="bar"
         bordered
         content-style="padding: 24px;"
         :native-scrollbar="false"
       >
         <n-flex vertical>
-          <n-button
-            type="primary"
-            ghost
-            style="width: 100%"
-            @click="
-              () => {
-                router.push({ name: 'NewUpload' })
-              }
-            "
-          >
-            <template #icon>
-              <n-icon>
-                <Add />
-              </n-icon>
-            </template>
-            {{ t('sider.new') }}</n-button
-          >
-          <n-flex vertical>
-            <n-flex justify="space-between">
-              <n-input
-                size="small"
-                style="flex: 1; font-size: 12px"
-                placeholder="搜索"
-              >
-                <template #suffix>
-                  <n-button text>
-                    <n-icon :component="SearchOutline" />
-                  </n-button>
-                </template>
-              </n-input>
+          <n-flex justify="space-between">
+            <n-input
+              size="small"
+              style="flex: 1; font-size: 12px"
+              placeholder="搜索"
+            >
+              <template #suffix>
+                <n-button text>
+                  <n-icon :component="SearchOutline" />
+                </n-button>
+              </template>
+            </n-input>
+            <n-dropdown
+              trigger="click"
+              :options="createOptions"
+              @select="handleCreateSelect"
+            >
               <n-button type="info" size="small">
                 <n-icon :component="Add" />
               </n-button>
-            </n-flex>
-            <Tree />
+            </n-dropdown>
           </n-flex>
+          <Tree :raw-data="records" />
         </n-flex>
       </n-layout-sider>
       <n-layout-content>

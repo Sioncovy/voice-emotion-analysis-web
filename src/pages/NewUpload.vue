@@ -3,6 +3,7 @@ import { ArchiveOutline, CheckmarkOutline } from '@vicons/ionicons5'
 import { FileInfo } from 'naive-ui/es/upload/src/interface'
 import { ref, computed } from 'vue'
 import { calcFileSize } from '../utils'
+import { Emotion } from '@/types'
 
 const audio = ref<File | null>(null)
 const audioUrl = computed(() => {
@@ -10,26 +11,29 @@ const audioUrl = computed(() => {
   return URL.createObjectURL(audio.value)
 })
 
-const result = ref<null | 'happy' | 'sad' | 'angry' | 'fear' | 'neutral'>(null)
+const result = ref<Emotion>(Emotion.NULL)
 const resultLoading = ref(false)
 
-const emotionImageMap = {
-  happy: 'https://img.icons8.com/color/48/000000/happy.png',
-  sad: 'https://img.icons8.com/color/48/000000/sad.png',
-  angry: 'https://img.icons8.com/color/48/000000/angry.png',
-  fear: 'https://img.icons8.com/color/48/000000/fear.png',
-  neutral: 'https://img.icons8.com/color/48/000000/neutral.png'
+const emotionImageMap: {
+  [key in Emotion]: string
+} = {
+  [Emotion.NULL]: '',
+  [Emotion.HAPPY]: 'https://img.icons8.com/color/48/000000/happy.png',
+  [Emotion.SAD]: 'https://img.icons8.com/color/48/000000/sad.png',
+  [Emotion.ANGER]: 'https://img.icons8.com/color/48/000000/angry.png',
+  [Emotion.FEAR]: 'https://img.icons8.com/color/48/000000/fear.png',
+  [Emotion.NEUTRAL]: 'https://img.icons8.com/color/48/000000/neutral.png'
 }
 
 const uploadFinished = (fileInfo: Required<FileInfo>) => {
   audio.value = fileInfo.file
-  console.log('upload finished', audio.value?.size)
+  console.log('upload finished', audio.value)
 }
 
 const submit = () => {
   resultLoading.value = true
   setTimeout(() => {
-    result.value = 'happy'
+    result.value = Emotion.HAPPY
     resultLoading.value = false
   }, 2000)
 }
@@ -48,11 +52,11 @@ const submit = () => {
         <n-upload
           accept=".mp3,.wav"
           action="http://127.0.0.1:4523/m1/3434069-0-default/common/upload"
-          directory-dnd
           :show-file-list="false"
           :on-finish="({ file }) => uploadFinished(file)"
         >
           <n-upload-dragger>
+            <!-- 没有上传文件的时候 -->
             <div v-if="audio === null">
               <div style="margin-bottom: 12px">
                 <n-icon size="60" :depth="3">
@@ -66,6 +70,7 @@ const submit = () => {
                 目前支持的音频格式为： MP3，WAV
               </n-p>
             </div>
+            <!-- 上传了文件的时候 -->
             <div v-else>
               <div style="margin-bottom: 12px">
                 <n-icon size="60" color="green" :depth="3">
@@ -98,7 +103,7 @@ const submit = () => {
         <n-h3 prefix="bar" type="info">解析结果</n-h3>
         <n-flex vertical>
           <n-spin v-if="resultLoading" />
-          <div v-if="result !== null">
+          <div v-if="result !== Emotion.NULL">
             <div>情绪：{{ result }}</div>
             <div>
               <img
