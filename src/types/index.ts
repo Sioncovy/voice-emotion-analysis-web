@@ -18,7 +18,7 @@ export type RecordType = {
   id: string
   title: string
   createdAt: number
-  audio: Blob | null
+  audio: File | null
   result: AnalysisResult
   parentId: string | null
   isFolder: boolean

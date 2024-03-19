@@ -7,7 +7,7 @@ const routes = [
     name: 'Home',
     children: [
       {
-        path: '',
+        path: '/:id',
         name: 'NewUpload',
         component: () => import('../pages/NewUpload.vue')
       }

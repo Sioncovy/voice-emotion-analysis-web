@@ -1,11 +1,32 @@
 <script setup lang="ts">
+import { Emotion, RecordType } from '@/types'
+import localforage from '@/utils/localforage'
 import { ArchiveOutline, CheckmarkOutline } from '@vicons/ionicons5'
 import { FileInfo } from 'naive-ui/es/upload/src/interface'
-import { ref, computed } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { calcFileSize } from '../utils'
-import { Emotion } from '@/types'
+
+const route = useRoute()
+const id = ref('')
+const record = ref<RecordType | null>(null)
+
+watch(
+  () => route.params.id,
+  async (newId) => {
+    const rawData = (await localforage.getItem(newId as string)) as RecordType
+    id.value = newId as string
+    record.value = rawData
+    audio.value = rawData.audio
+    result.value = rawData.result as Emotion
+  },
+  {
+    immediate: true
+  }
+)
 
 const audio = ref<File | null>(null)
+console.log('✨  ~ audio:', audio.value)
 const audioUrl = computed(() => {
   if (audio.value === null) return ''
   return URL.createObjectURL(audio.value)
@@ -25,16 +46,26 @@ const emotionImageMap: {
   [Emotion.NEUTRAL]: 'https://img.icons8.com/color/48/000000/neutral.png'
 }
 
-const uploadFinished = (fileInfo: Required<FileInfo>) => {
+const uploadFinished = async (fileInfo: Required<FileInfo>) => {
   audio.value = fileInfo.file
+  const rawData = (await localforage.getItem(id.value)) as RecordType
+  localforage.setItem(id.value, {
+    ...rawData,
+    audio: fileInfo.file
+  })
   console.log('upload finished', audio.value)
 }
 
-const submit = () => {
+const submit = async () => {
   resultLoading.value = true
-  setTimeout(() => {
+  setTimeout(async () => {
     result.value = Emotion.HAPPY
     resultLoading.value = false
+    const rawdata = (await localforage.getItem(id.value)) as RecordType
+    localforage.setItem(id.value, {
+      ...rawdata,
+      result: Emotion.HAPPY
+    })
   }, 2000)
 }
 </script>
@@ -51,9 +82,13 @@ const submit = () => {
         <n-h3 prefix="bar" type="info">上传音频</n-h3>
         <n-upload
           accept=".mp3,.wav"
-          action="http://127.0.0.1:4523/m1/3434069-0-default/common/upload"
           :show-file-list="false"
-          :on-finish="({ file }) => uploadFinished(file)"
+          @before-upload="
+            ({ file }) => {
+              uploadFinished(file)
+              return false
+            }
+          "
         >
           <n-upload-dragger>
             <!-- 没有上传文件的时候 -->

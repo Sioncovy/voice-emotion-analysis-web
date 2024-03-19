@@ -31,7 +31,7 @@ export function createNewRecord(type: CreateType): RecordType {
   const now = dayjs()
   const time = now.format('YYYY-MM-DD HH:mm:ss')
   return {
-    id: time.valueOf(),
+    id: now.valueOf().toString(),
     title: time.valueOf(),
     createdAt: now.valueOf(),
     audio: null,
