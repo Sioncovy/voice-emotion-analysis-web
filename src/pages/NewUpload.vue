@@ -26,7 +26,6 @@ watch(
 )
 
 const audio = ref<File | null>(null)
-console.log('✨  ~ audio:', audio.value)
 const audioUrl = computed(() => {
   if (audio.value === null) return ''
   return URL.createObjectURL(audio.value)

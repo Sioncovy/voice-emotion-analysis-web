@@ -3,6 +3,7 @@ import { Component, h } from 'vue'
 import dayjs from 'dayjs'
 import { CreateType, Emotion, RecordType } from '@/types'
 import _ from 'lodash'
+export * from './request'
 
 export function calcFileSize(size: number) {
   const kb = 1024
