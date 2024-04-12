@@ -33,6 +33,7 @@ if (!store.userInfo) {
     .catch(() => {
       store.userInfo = null
       localStorage.removeItem(AUTH_TOKEN_KEY)
+      router.push('/login')
     })
 }
 
