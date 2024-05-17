@@ -6,6 +6,7 @@ import { FileInfo } from 'naive-ui/es/upload/src/interface'
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { calcFileSize } from '../utils'
+import { analysis } from '@/apis'
 
 const route = useRoute()
 const id = ref('')
@@ -57,15 +58,15 @@ const uploadFinished = async (fileInfo: Required<FileInfo>) => {
 
 const submit = async () => {
   resultLoading.value = true
-  setTimeout(async () => {
-    result.value = Emotion.HAPPY
-    resultLoading.value = false
-    const rawdata = (await localforage.getItem(id.value)) as RecordType
-    localforage.setItem(id.value, {
-      ...rawdata,
-      result: Emotion.HAPPY
-    })
-  }, 2000)
+  if (audio.value === null) return
+  const { data } = await analysis(audio.value)
+  result.value = data?.emotion
+  resultLoading.value = false
+  const rawdata = (await localforage.getItem(id.value)) as RecordType
+  localforage.setItem(id.value, {
+    ...rawdata,
+    result: data?.emotion
+  })
 }
 </script>
 

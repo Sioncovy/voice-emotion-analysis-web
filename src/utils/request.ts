@@ -1,8 +1,12 @@
 import axios from 'axios'
-import { AUTH_TOKEN_KEY, APP_API } from '@/config'
+import { AUTH_TOKEN_KEY, REQUEST_URL, PY_REQUEST_API } from '@/config'
 
 const request = axios.create({
-  baseURL: APP_API
+  baseURL: REQUEST_URL
+})
+
+const pyRequest = axios.create({
+  baseURL: PY_REQUEST_API
 })
 
 request.interceptors.request.use(
@@ -26,4 +30,4 @@ request.interceptors.response.use(
   }
 )
 
-export { request }
+export { request, pyRequest }

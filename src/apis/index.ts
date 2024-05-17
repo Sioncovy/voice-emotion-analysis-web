@@ -1,5 +1,5 @@
 import { User } from '@/types'
-import { request } from '@/utils'
+import { pyRequest, request } from '@/utils'
 
 export const login = (data: {
   username: string
@@ -15,3 +15,15 @@ export const register = (data: {
 }): Promise<User> => request.post('/users/register', data)
 
 export const profile = (): Promise<User> => request.get('/users/profile')
+
+export const analysis = (file: File): Promise<any> =>
+  pyRequest({
+    url: '/predict',
+    method: 'POST',
+    data: {
+      file
+    },
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
