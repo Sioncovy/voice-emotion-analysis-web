@@ -5,11 +5,14 @@ export enum CreateType {
 
 export enum Emotion {
   NULL = 'null',
-  ANGER = 'anger',
-  FEAR = 'fear',
-  HAPPY = 'happy',
-  NEUTRAL = 'neutral',
-  SAD = 'sad'
+  '中性' = '中性',
+  '平静' = '平静',
+  '快乐' = '快乐',
+  '悲伤' = '悲伤',
+  '愤怒' = '愤怒',
+  '恐惧' = '恐惧',
+  '厌恶' = '厌恶',
+  '惊讶' = '惊讶'
 }
 
 export type AnalysisResult = string

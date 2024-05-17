@@ -39,11 +39,14 @@ const emotionImageMap: {
   [key in Emotion]: string
 } = {
   [Emotion.NULL]: '',
-  [Emotion.HAPPY]: 'https://img.icons8.com/color/48/000000/happy.png',
-  [Emotion.SAD]: 'https://img.icons8.com/color/48/000000/sad.png',
-  [Emotion.ANGER]: 'https://img.icons8.com/color/48/000000/angry.png',
-  [Emotion.FEAR]: 'https://img.icons8.com/color/48/000000/fear.png',
-  [Emotion.NEUTRAL]: 'https://img.icons8.com/color/48/000000/neutral.png'
+  [Emotion.快乐]: '/emotion/happy.png',
+  [Emotion.悲伤]: '/emotion/sad.png',
+  [Emotion.愤怒]: '/emotion/angry.png',
+  [Emotion.恐惧]: '/emotion/fear.png',
+  [Emotion.惊讶]: '/emotion/surprise.png',
+  [Emotion.厌恶]: '/emotion/disgust.png',
+  [Emotion.中性]: '/emotion/neutral.png',
+  [Emotion.平静]: '/emotion/peace.png'
 }
 
 const uploadFinished = async (fileInfo: Required<FileInfo>) => {
@@ -138,19 +141,20 @@ const submit = async () => {
         <n-h3 prefix="bar" type="info">解析结果</n-h3>
         <n-flex vertical>
           <n-spin v-if="resultLoading" />
-          <div v-if="result !== Emotion.NULL">
-            <div>情绪：{{ result }}</div>
-            <div>
-              <img
-                :src="emotionImageMap[result]"
-                style="width: 100px; height: 100px"
-              />
-            </div>
-          </div>
+          <n-flex justify="center" v-if="result !== Emotion.NULL">
+            <img :src="emotionImageMap[result]" style="width: 100%" />
+            <div class="result">情绪：{{ result }}</div>
+          </n-flex>
         </n-flex>
       </div>
     </template>
   </n-split>
 </template>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.result {
+  font-size: 24px;
+  padding: 12px;
+  border-bottom: 2px solid #f0f0f0;
+}
+</style>
