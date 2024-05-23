@@ -7,7 +7,9 @@ import {
   FolderOutline,
   LanguageOutline,
   Mic,
-  SearchOutline
+  SearchOutline,
+  Help,
+  Close
 } from '@vicons/ionicons5'
 import { DropdownProps, MenuOption } from 'naive-ui'
 import { ref } from 'vue'
@@ -17,12 +19,15 @@ import { AUTH_TOKEN_KEY } from './config'
 import { useStore } from './store'
 import { createNewRecord, renderIcon } from './utils'
 import { profile } from './apis'
+import Advice from './pages/Advice/index.vue'
 
 const router = useRouter()
 const store = useStore()
 const { t, locale } = useI18n({ useScope: 'global' })
 
 const search = ref('')
+const adviceOpen = ref(false)
+const adviceList = ref([])
 
 if (!store.userInfo) {
   profile()
@@ -119,6 +124,21 @@ const selectHandle = (key: string) => {
       >
         <n-h1 prefix="bar" :style="{ margin: 0 }">{{ t('global.title') }}</n-h1>
         <n-flex align="center">
+          <n-float-button
+            :bottom="40"
+            :right="40"
+            style="z-index: 100"
+            type="primary"
+            @click="
+              () => {
+                adviceOpen = true
+              }
+            "
+          >
+            <n-icon>
+              <Help />
+            </n-icon>
+          </n-float-button>
           <n-dropdown
             :value="locale"
             trigger="click"
@@ -215,6 +235,14 @@ const selectHandle = (key: string) => {
       </n-layout-content>
     </n-layout>
   </n-layout>
+  <n-modal
+    :show="adviceOpen"
+    preset="card"
+    style="width: 600px"
+    title="问题列表"
+  >
+    <Advice />
+  </n-modal>
 </template>
 
 <style scoped></style>

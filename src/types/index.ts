@@ -60,3 +60,14 @@ export enum RecordStatus {
   Stop = 'stop',
   Init = 'init'
 }
+
+export interface Advice {
+  _id: string
+  title: string
+  content: string
+  reply?: string
+  // 用户评价
+  evaluation?: number
+  createdAt: string
+  updatedAt: string
+}
