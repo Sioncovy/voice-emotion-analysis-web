@@ -15,6 +15,13 @@ export enum Emotion {
   '惊讶' = '惊讶'
 }
 
+enum AudioRecordStatus {
+  Record = 'record',
+  Pause = 'pause',
+  Stop = 'stop',
+  Init = 'init'
+}
+
 export type AnalysisResult = string
 
 export type RecordType = {

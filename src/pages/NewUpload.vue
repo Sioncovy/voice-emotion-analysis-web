@@ -7,6 +7,9 @@ import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { calcFileSize } from '../utils'
 import { analysis } from '@/apis'
+import { useStore } from '@/store'
+
+const store = useStore()
 
 const route = useRoute()
 const id = ref('')
@@ -69,6 +72,15 @@ const submit = async () => {
   localforage.setItem(id.value, {
     ...rawdata,
     result: data?.emotion
+  })
+  store.records = store.records.map((item) => {
+    if (item.id === id.value) {
+      return {
+        ...item,
+        result: data?.emotion
+      }
+    }
+    return item
   })
 }
 </script>

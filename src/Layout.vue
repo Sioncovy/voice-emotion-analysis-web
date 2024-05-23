@@ -23,7 +23,6 @@ const store = useStore()
 const { t, locale } = useI18n({ useScope: 'global' })
 
 const search = ref('')
-const records = ref<RecordType[]>([])
 
 if (!store.userInfo) {
   profile()
@@ -43,7 +42,7 @@ async function getLocalRecord() {
     keys.map((key) => localforage.getItem(key))
   )) as RecordType[]
 
-  records.value = list
+  store.records = list
 }
 
 // 读取本地记录数据
@@ -191,8 +190,22 @@ const selectHandle = (key: string) => {
               </n-button>
             </n-dropdown>
           </n-flex>
+          <n-button
+            type="primary"
+            ghost
+            size="small"
+            @click="
+              () => {
+                router.push({ name: 'Analysis' })
+              }
+            "
+          >
+            分析统计
+          </n-button>
           <Tree
-            :raw-data="records.filter((item) => item.title.includes(search))"
+            :raw-data="
+              store.records.filter((item) => item.title.includes(search))
+            "
             @getLocalRecord="getLocalRecord"
           />
         </n-flex>
