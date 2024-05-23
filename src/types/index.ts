@@ -48,3 +48,15 @@ export interface User {
   createdAt: string
   updatedAt: string
 }
+
+export enum Mode {
+  File = 'file',
+  Record = 'record'
+}
+
+export enum RecordStatus {
+  Record = 'record',
+  Pause = 'pause',
+  Stop = 'stop',
+  Init = 'init'
+}

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Emotion, RecordType } from '@/types'
+import { Emotion, Mode, RecordStatus, RecordType } from '@/types'
 import localforage from '@/utils/localforage'
 import { ArchiveOutline, CheckmarkOutline } from '@vicons/ionicons5'
 import { FileInfo } from 'naive-ui/es/upload/src/interface'
@@ -8,12 +8,22 @@ import { useRoute } from 'vue-router'
 import { calcFileSize } from '../utils'
 import { analysis } from '@/apis'
 import { useStore } from '@/store'
+import Recorder from 'js-audio-recorder'
 
 const store = useStore()
 
 const route = useRoute()
 const id = ref('')
 const record = ref<RecordType | null>(null)
+
+const mode = ref<Mode>(Mode.File)
+const recordStatus = ref<RecordStatus>(RecordStatus.Init)
+
+const recorder = new Recorder({
+  sampleBits: 16, // 采样位数，支持 8 或 16，默认是16
+  sampleRate: 48000, // 采样率，支持 11025、16000、22050、24000、44100、48000，根据浏览器默认值，我的chrome是48000
+  numChannels: 1 // 声道，支持 1 或 2， 默认是1
+})
 
 watch(
   () => route.params.id,
@@ -83,6 +93,21 @@ const submit = async () => {
     return item
   })
 }
+
+const completeRecord = async () => {
+  recordStatus.value = RecordStatus.Init
+  const blob = recorder.getWAVBlob()
+  recorder.stop()
+  const file = new File([blob], 'audio.wav', {
+    type: 'audio/wav'
+  })
+  audio.value = file
+  const rawData = (await localforage.getItem(id.value)) as RecordType
+  localforage.setItem(id.value, {
+    ...rawData,
+    audio: file
+  })
+}
 </script>
 
 <template>
@@ -94,49 +119,92 @@ const submit = async () => {
   >
     <template #1>
       <n-flex vertical style="padding: 24px">
-        <n-h3 prefix="bar" type="info">上传音频</n-h3>
-        <n-upload
-          accept=".mp3,.wav"
-          :show-file-list="false"
-          @before-upload="
-            ({ file }) => {
-              uploadFinished(file)
-              return false
+        <n-h3 prefix="bar" type="info">{{
+          mode === Mode.File ? '上传音频' : '录制音频'
+        }}</n-h3>
+        <n-select
+          style="width: 120px"
+          :value="mode"
+          :items="[
+            {
+              label: '文件',
+              value: Mode.File
+            },
+            {
+              label: '录音',
+              value: Mode.Record
             }
-          "
-        >
-          <n-upload-dragger>
-            <!-- 没有上传文件的时候 -->
-            <div v-if="audio === null">
-              <div style="margin-bottom: 12px">
-                <n-icon size="60" :depth="3">
-                  <ArchiveOutline />
-                </n-icon>
+          ]"
+          @change="(value) => {
+            mode = value as Mode
+          }"
+        />
+        <div v-if="mode === Mode.File">
+          <n-upload
+            accept=".mp3,.wav"
+            :show-file-list="false"
+            @before-upload="
+              ({ file }) => {
+                uploadFinished(file)
+                return false
+              }
+            "
+          >
+            <n-upload-dragger>
+              <!-- 没有上传文件的时候 -->
+              <div v-if="audio === null">
+                <div style="margin-bottom: 12px">
+                  <n-icon size="60" :depth="3">
+                    <ArchiveOutline />
+                  </n-icon>
+                </div>
+                <n-text style="font-size: 16px">
+                  点击或者拖动文件到该区域来上传
+                </n-text>
+                <n-p depth="3" style="margin: 8px 0 0 0">
+                  目前支持的音频格式为： MP3，WAV
+                </n-p>
               </div>
-              <n-text style="font-size: 16px">
-                点击或者拖动文件到该区域来上传
-              </n-text>
-              <n-p depth="3" style="margin: 8px 0 0 0">
-                目前支持的音频格式为： MP3，WAV
-              </n-p>
-            </div>
-            <!-- 上传了文件的时候 -->
-            <div v-else>
-              <div style="margin-bottom: 12px">
-                <n-icon size="60" color="green" :depth="3">
-                  <CheckmarkOutline />
-                </n-icon>
+              <!-- 上传了文件的时候 -->
+              <div v-else>
+                <div style="margin-bottom: 12px">
+                  <n-icon size="60" color="green" :depth="3">
+                    <CheckmarkOutline />
+                  </n-icon>
+                </div>
+                <n-text style="font-size: 16px">
+                  {{ audio.name }}
+                </n-text>
+                <n-p depth="3" style="margin: 8px 0 0 0">
+                  文件大小：{{ calcFileSize(audio.size) }}
+                </n-p>
               </div>
-              <n-text style="font-size: 16px">
-                {{ audio.name }}
-              </n-text>
-              <n-p depth="3" style="margin: 8px 0 0 0">
-                文件大小：{{ calcFileSize(audio.size) }}
-              </n-p>
-            </div>
-          </n-upload-dragger>
-        </n-upload>
+            </n-upload-dragger>
+          </n-upload>
+        </div>
+        <div v-else>
+          <n-button
+            :type="recordStatus === RecordStatus.Record ? 'error' : 'primary'"
+            ghost
+            style="width: 100%"
+            @click="
+              () => {
+                console.log('record')
+                if (recordStatus === RecordStatus.Record) {
+                  completeRecord()
+                } else {
+                  recorder.start().then(() => {
+                    recordStatus = RecordStatus.Record
+                  })
+                }
+              }
+            "
+          >
+            {{ recordStatus === RecordStatus.Record ? '停止录音' : '开始录音' }}
+          </n-button>
+        </div>
         <audio v-if="audio" style="width: 100%" controls :src="audioUrl" />
+
         <n-button
           v-if="audio"
           type="info"
