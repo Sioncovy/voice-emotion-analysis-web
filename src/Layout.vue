@@ -2,32 +2,19 @@
 import Tree from '@/pages/Tree/index.vue'
 import { CreateType, RecordType } from '@/types'
 import localforage from '@/utils/localforage'
-import {
-  Add,
-  FolderOutline,
-  LanguageOutline,
-  Mic,
-  SearchOutline,
-  Help,
-  Close
-} from '@vicons/ionicons5'
-import { DropdownProps, MenuOption } from 'naive-ui'
+import { Add, FolderOutline, Mic, SearchOutline } from '@vicons/ionicons5'
+import { DropdownProps } from 'naive-ui'
 import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import { profile } from './apis'
 import { AUTH_TOKEN_KEY } from './config'
 import { useStore } from './store'
 import { createNewRecord, renderIcon } from './utils'
-import { profile } from './apis'
-import Advice from './pages/Advice/index.vue'
 
 const router = useRouter()
 const store = useStore()
-const { t, locale } = useI18n({ useScope: 'global' })
 
 const search = ref('')
-const adviceOpen = ref(false)
-const adviceList = ref([])
 
 if (!store.userInfo) {
   profile()
@@ -52,21 +39,6 @@ async function getLocalRecord() {
 
 // 读取本地记录数据
 getLocalRecord()
-
-const languageOptions: DropdownProps['options'] = [
-  {
-    label: '中文',
-    key: 'zh'
-  },
-  {
-    label: 'English',
-    key: 'en'
-  }
-]
-
-const handleLanguageChange = (value: string) => {
-  locale.value = value
-}
 
 const createOptions: DropdownProps['options'] = [
   {
@@ -97,85 +69,10 @@ const handleCreateSelect = async (value: CreateType) => {
   }
   await getLocalRecord()
 }
-
-const dropdownOptions: MenuOption[] = [
-  {
-    label: () => t('menu.logout'),
-    key: 'logout'
-  }
-]
-
-const selectHandle = (key: string) => {
-  if (key === 'logout') {
-    store.userInfo = null
-    localStorage.removeItem(AUTH_TOKEN_KEY)
-    router.push('/login')
-  }
-}
 </script>
 
 <template>
   <n-layout :style="{ height: '100%' }">
-    <n-layout-header bordered :style="{ height: '64px' }">
-      <n-flex
-        :style="{ height: '100%', padding: '0 24px' }"
-        justify="space-between"
-        align="center"
-      >
-        <n-h1 prefix="bar" :style="{ margin: 0 }">{{ t('global.title') }}</n-h1>
-        <n-flex align="center">
-          <n-float-button
-            :bottom="40"
-            :right="40"
-            style="z-index: 100"
-            type="primary"
-            @click="
-              () => {
-                adviceOpen = true
-              }
-            "
-          >
-            <n-icon>
-              <Help />
-            </n-icon>
-          </n-float-button>
-          <n-dropdown
-            :value="locale"
-            trigger="click"
-            :options="languageOptions"
-            @select="handleLanguageChange"
-          >
-            <n-button text style="font-size: 18px">
-              <n-icon>
-                <LanguageOutline />
-              </n-icon>
-            </n-button>
-          </n-dropdown>
-          <n-button
-            text
-            @click="
-              () => {
-                router.push({ name: 'About' })
-              }
-            "
-          >
-            {{ t('global.about') }}
-          </n-button>
-          <n-dropdown
-            trigger="click"
-            :options="dropdownOptions"
-            @select="selectHandle"
-          >
-            <n-avatar
-              size="small"
-              shape="circle"
-              style="margin-left: 8px"
-              :src="store.userInfo?.avatar"
-            />
-          </n-dropdown>
-        </n-flex>
-      </n-flex>
-    </n-layout-header>
     <n-layout has-sider :style="{ height: 'calc(100% - 64px)' }">
       <n-layout-sider
         collapse-mode="transform"
@@ -235,19 +132,6 @@ const selectHandle = (key: string) => {
       </n-layout-content>
     </n-layout>
   </n-layout>
-  <n-modal
-    :show="adviceOpen"
-    preset="card"
-    style="width: 600px"
-    title="问题列表"
-    @close="
-      () => {
-        adviceOpen = false
-      }
-    "
-  >
-    <Advice />
-  </n-modal>
 </template>
 
 <style scoped></style>

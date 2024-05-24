@@ -5,5 +5,9 @@ export const zh = {
   },
   sider: {
     new: '新上传'
+  },
+  menu: {
+    analysis: '分析',
+    share: '社区'
   }
 }

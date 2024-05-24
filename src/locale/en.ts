@@ -5,5 +5,9 @@ export const en = {
   },
   sider: {
     new: 'New Upload'
+  },
+  menu: {
+    analysis: 'Analysis',
+    share: 'Community'
   }
 }
