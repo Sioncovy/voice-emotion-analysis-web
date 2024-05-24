@@ -68,6 +68,17 @@ export interface Advice {
   reply?: string
   // 用户评价
   evaluation?: number
+  user: User
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Share {
+  _id: string
+  title: string
+  content: string
+  imageUrl: string
+  user: User
   createdAt: string
   updatedAt: string
 }

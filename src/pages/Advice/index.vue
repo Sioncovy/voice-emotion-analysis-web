@@ -6,93 +6,7 @@ import Detail from './Detail.vue'
 import { FormInst } from 'naive-ui'
 import { createAdvice, getAdviceList } from '@/apis'
 
-const list = ref<Advice[]>([
-  {
-    _id: '1',
-    title: '如何使用 Vue3',
-    content:
-      '请问如何使用 Vue3？请问如何使用 Vue3？请问如何使用 Vue3？请问如何使用 Vue3？请问如何使用 Vue3？请问如何使用 Vue3？请问如何使用 Vue3？请问如何使用 Vue3？请问如何使用 Vue3？请问如何使用 Vue3？请问如何使用 Vue3？请问如何使用 Vue3？请问如何使用 Vue3？请问如何使用 Vue3？请问如何使用 Vue3？请问如何使用 Vue3？',
-    createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
-  },
-  {
-    _id: '2',
-    title: '如何使用 Vite',
-    content: '请问如何使用 Vite？',
-    createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
-  },
-  {
-    _id: '3',
-    title: '如何使用 VitePress',
-    content: '请问如何使用 VitePress？',
-    createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
-  },
-  {
-    _id: '4',
-    title: '如何使用 VitePress',
-    content: '请问如何使用 VitePress？',
-    createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
-  },
-  {
-    _id: '5',
-    title: '如何使用 VitePress',
-    content: '请问如何使用 VitePress？',
-    createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
-  },
-  {
-    _id: '6',
-    title: '如何使用 VitePress',
-    content: '请问如何使用 VitePress？',
-    createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
-  },
-  {
-    _id: '7',
-    title: '如何使用 VitePress',
-    content: '请问如何使用 VitePress？',
-    createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
-  },
-  {
-    _id: '8',
-    title: '如何使用 VitePress',
-    content: '请问如何使用 VitePress？',
-    createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
-  },
-  {
-    _id: '9',
-    title: '如何使用 VitePress',
-    content: '请问如何使用 VitePress？',
-    createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
-  },
-  {
-    _id: '10',
-    title: '如何使用 VitePress',
-    content: '请问如何使用 VitePress？',
-    createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
-  },
-  {
-    _id: '11',
-    title: '如何使用 VitePress',
-    content: '请问如何使用 VitePress？',
-    createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
-  },
-  {
-    _id: '12',
-    title: '如何使用 VitePress',
-    content: '请问如何使用 VitePress？',
-    createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
-  }
-])
+const list = ref<Advice[]>([])
 
 getAdviceList().then((res) => {
   console.log('✨  ~ getAdviceList ~ res:', res)
@@ -145,7 +59,7 @@ const addAdvice = () => {
 </script>
 
 <template>
-  <n-thing class="container">
+  <n-thing class="detail">
     <!-- <n-h2 prefix="bar">问题列表</n-h2> -->
     <n-flex vertical size="medium">
       <n-list clickable hoverable bordered class="list">
@@ -245,7 +159,7 @@ const addAdvice = () => {
           />
         </n-form-item>
         <n-button block ghost type="primary" @click="addAdvice">
-          验证
+          提交
         </n-button>
       </n-form>
     </n-thing>
@@ -253,7 +167,7 @@ const addAdvice = () => {
 </template>
 
 <style lang="less" scoped>
-.container {
+.detail {
   // width: 600px;
 
   .list {

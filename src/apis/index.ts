@@ -1,4 +1,4 @@
-import { User } from '@/types'
+import { Advice, Share, User } from '@/types'
 import { pyRequest, request } from '@/utils'
 
 export const login = (data: {
@@ -28,9 +28,16 @@ export const analysis = (file: File): Promise<any> =>
     }
   })
 
-export const getAdviceList = (): Promise<any[]> => request.get('/advices')
+export const getAdviceList = (): Promise<Advice[]> => request.get('/advices')
 
 export const createAdvice = (data: {
   title: string
   content: string
-}): Promise<any> => request.post('/advices', data)
+}): Promise<Advice> => request.post('/advices', data)
+
+export const getShareList = (): Promise<Share[]> => request.get('/shares')
+
+export const createShare = (data: {
+  title: string
+  content: string
+}): Promise<Share> => request.post('/shares', data)

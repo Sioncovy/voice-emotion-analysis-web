@@ -13,7 +13,7 @@ console.log(props.advice)
 </script>
 
 <template>
-  <n-thing class="container">
+  <n-thing class="detail">
     <n-h2 prefix="bar">{{ props.advice.title }}</n-h2>
     <n-flex vertical :size="24">
       <n-card class="content">
@@ -31,7 +31,7 @@ console.log(props.advice)
 </template>
 
 <style lang="less" scoped>
-.container {
+.detail {
   height: 800px;
 
   .content {

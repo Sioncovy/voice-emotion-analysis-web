@@ -7,18 +7,33 @@ import {
   ShareSocialOutline
 } from '@vicons/ionicons5'
 import { DropdownProps, MenuOption, NIcon } from 'naive-ui'
-import { Component, h, ref } from 'vue'
+import { Component, h, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { AUTH_TOKEN_KEY } from './config'
 import { useStore } from './store'
 
 const { t, locale } = useI18n({ useScope: 'global' })
 const router = useRouter()
 const store = useStore()
+console.log('✨  ~ store:', store)
 
 const adviceOpen = ref(false)
 const tab = ref<'analysis' | 'share'>('analysis')
+
+const route = useRoute()
+
+watch(
+  () => route.name,
+  (name) => {
+    if (name === 'Analysis' || name === 'Home') {
+      tab.value = 'analysis'
+    } else if (name === 'Share') {
+      tab.value = 'share'
+    }
+  },
+  { immediate: true }
+)
 
 const languageOptions: DropdownProps['options'] = [
   {
