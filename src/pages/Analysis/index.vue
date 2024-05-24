@@ -1,18 +1,24 @@
 <script setup lang="ts">
 import { useStore } from '@/store'
-import dayjs from 'dayjs'
-import PieChart from './PieChart.vue'
-import BarChart from './BarChart.vue'
-import LineChart from './LineChart.vue'
+import { Emotion, RecordType } from '@/types'
 import localforage from '@/utils/localforage'
-import { RecordType } from '@/types'
+import dayjs from 'dayjs'
 import { ref } from 'vue'
+import BarChart from './BarChart.vue'
+import EmotionAdvice from './EmotionAdvice.vue'
+import LineChart from './LineChart.vue'
+import PieChart from './PieChart.vue'
+import { analysisAdviceConfig } from './config'
 
 const store = useStore()
 console.log('✨  ~ store:', store)
 
 const todayDataObj = ref<Record<string, number>>({})
 const todayData = ref<any[]>([])
+const emotion = ref<{
+  emotion: Emotion
+  count: number
+}>()
 
 const weekDataObj = ref<Record<string, number>>({})
 const weekData = ref<any[]>([])
@@ -36,10 +42,23 @@ async function getLocalRecord() {
       acc[key] = acc[key] ? acc[key] + 1 : 1
       return acc
     }, {})
-  todayData.value = Object.keys(todayDataObj.value).map((key) => ({
-    value: todayDataObj.value[key],
-    name: key
-  }))
+  todayData.value = Object.keys(todayDataObj.value).map((key) => {
+    if (!emotion.value) {
+      emotion.value = {
+        emotion: key as Emotion,
+        count: todayDataObj.value[key]
+      }
+    } else if (todayDataObj.value[key] > emotion.value.count) {
+      emotion.value = {
+        emotion: key as Emotion,
+        count: todayDataObj.value[key]
+      }
+    }
+    return {
+      value: todayDataObj.value[key],
+      name: key
+    }
+  })
 
   const week = dayjs().subtract(7, 'day').format('YYYY-MM-DD')
   weekDataObj.value = list
@@ -66,7 +85,7 @@ console.log('✨  ~ todayData ~ todayData:', todayData.value)
 </script>
 
 <template>
-  <div style="padding: 24px; height: calc(100% - 48px)">
+  <div style="padding: 24px; height: calc(100vh - 48px - 64px)">
     <n-grid :x-gap="12" :y-gap="8" :cols="2" style="height: 100%">
       <n-grid-item>
         <n-card style="height: 100%">
@@ -85,7 +104,12 @@ console.log('✨  ~ todayData ~ todayData:', todayData.value)
       </n-grid-item>
       <n-grid-item>
         <n-card style="height: 100%">
-          <div>这里是一些建议</div>
+          <n-h2 prefix="bar">{{ emotion?.emotion }}情绪的调整建议</n-h2>
+          <EmotionAdvice
+            :advice-list="
+              analysisAdviceConfig[emotion?.emotion || Emotion.NULL]
+            "
+          />
         </n-card>
       </n-grid-item>
     </n-grid>

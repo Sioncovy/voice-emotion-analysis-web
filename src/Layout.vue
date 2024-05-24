@@ -73,7 +73,7 @@ const handleCreateSelect = async (value: CreateType) => {
 
 <template>
   <n-layout :style="{ height: '100%' }">
-    <n-layout has-sider :style="{ height: 'calc(100% - 64px)' }">
+    <n-layout has-sider :style="{ height: 'calc(100vh - 64px)' }">
       <n-layout-sider
         collapse-mode="transform"
         :collapsed-width="0"

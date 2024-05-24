@@ -145,7 +145,7 @@ const menuOptions: MenuOption[] = [
         </n-flex>
       </n-flex>
     </n-layout-header>
-    <n-layout has-sider :style="{ height: 'calc(100% - 64px)' }">
+    <n-layout has-sider :style="{ height: 'calc(100vh - 64px)' }">
       <n-layout-sider
         bordered
         collapse-mode="width"
