@@ -240,6 +240,11 @@ const selectHandle = (key: string) => {
     preset="card"
     style="width: 600px"
     title="问题列表"
+    @close="
+      () => {
+        adviceOpen = false
+      }
+    "
   >
     <Advice />
   </n-modal>

@@ -27,3 +27,10 @@ export const analysis = (file: File): Promise<any> =>
       'Content-Type': 'multipart/form-data'
     }
   })
+
+export const getAdviceList = (): Promise<any[]> => request.get('/advices')
+
+export const createAdvice = (data: {
+  title: string
+  content: string
+}): Promise<any> => request.post('/advices', data)

@@ -4,6 +4,7 @@ import { reactive, ref } from 'vue'
 import dayjs from 'dayjs'
 import Detail from './Detail.vue'
 import { FormInst } from 'naive-ui'
+import { createAdvice, getAdviceList } from '@/apis'
 
 const list = ref<Advice[]>([
   {
@@ -92,6 +93,12 @@ const list = ref<Advice[]>([
     updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
   }
 ])
+
+getAdviceList().then((res) => {
+  console.log('✨  ~ getAdviceList ~ res:', res)
+  list.value = res
+})
+
 const detailOpen = ref(false)
 const addOpen = ref(false)
 const advice = ref<Advice | null>(null)
@@ -121,6 +128,14 @@ const addAdvice = () => {
     if (valid) {
       console.log('验证成功')
       console.log(addFormValue)
+      createAdvice(addFormValue).then((res) => {
+        console.log('✨  ~ createAdvice ~ res:', res)
+        addOpen.value = false
+        getAdviceList().then((res) => {
+          console.log('✨  ~ getAdviceList ~ res:', res)
+          list.value = res
+        })
+      })
     } else {
       console.log('验证失败')
       console.log(addFormValue)
@@ -143,8 +158,16 @@ const addAdvice = () => {
             <n-h3>{{ item.title }}</n-h3>
             <n-p>{{ contentHandle(item.content) }}</n-p>
             <n-flex class="bottom">
-              <n-text :depth="3">创建时间：{{ item.createdAt }}</n-text>
-              <n-text :depth="3">更新时间：{{ item.updatedAt }}</n-text>
+              <n-text :depth="3"
+                >创建时间：{{
+                  dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
+                }}</n-text
+              >
+              <n-text :depth="3"
+                >更新时间：{{
+                  dayjs(item.updatedAt).format('YYYY-MM-DD HH:mm:ss')
+                }}</n-text
+              >
             </n-flex>
           </n-thing>
         </n-list-item>
