@@ -56,6 +56,9 @@ importers:
       vue-router:
         specifier: ^4.2.5
         version: 4.2.5(vue@3.4.15(typescript@5.3.3))
+      wavesurfer.js:
+        specifier: ^7.7.15
+        version: 7.7.15
     devDependencies:
       '@types/lodash':
         specifier: ^4.17.0
@@ -998,6 +1001,9 @@ packages:
     peerDependencies:
       vue: ^3.0.11
 
+  wavesurfer.js@7.7.15:
+    resolution: {integrity: sha512-qJE7sZ5qnFG9wBtU9+jBpYn7faWXZHEz1I25Xnf4EhGqqS2rFj/hxTtbIaETynalPajxC1xXd/9TnDHWO+mARA==}
+
   webpack-sources@3.2.3:
     resolution: {integrity: sha512-/DyMEOrDgLKKIG0fmvtz+4dUX/3Ghozwgm6iPp8KRhvn+eQf9+Q7GWxVNMk3+uCPWfdXYC4ExGBckIXdFEfH1w==}
     engines: {node: '>=10.13.0'}
@@ -1869,6 +1875,8 @@ snapshots:
       vdirs: 0.1.8(vue@3.4.15(typescript@5.3.3))
       vooks: 0.2.12(vue@3.4.15(typescript@5.3.3))
       vue: 3.4.15(typescript@5.3.3)
+
+  wavesurfer.js@7.7.15: {}
 
   webpack-sources@3.2.3: {}
 

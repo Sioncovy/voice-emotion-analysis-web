@@ -11,7 +11,6 @@ import PieChart from './PieChart.vue'
 import { analysisAdviceConfig } from './config'
 
 const store = useStore()
-console.log('✨  ~ store:', store)
 
 const todayDataObj = ref<Record<string, number>>({})
 const todayData = ref<any[]>([])
@@ -21,6 +20,7 @@ const emotion = ref<{
 }>()
 
 const weekDataObj = ref<Record<string, number>>({})
+
 const weekData = ref<any[]>([])
 
 async function getLocalRecord() {
@@ -35,7 +35,8 @@ async function getLocalRecord() {
   todayDataObj.value = list
     .filter(
       (item: any) =>
-        item.title.split(' ')[0] === today && item.result !== 'null'
+        dayjs(item.createdAt).format('YYYY-MM-DD') === today &&
+        item.result !== 'null'
     )
     .reduce((acc: any, cur: any) => {
       const key = cur.result
@@ -64,14 +65,15 @@ async function getLocalRecord() {
   weekDataObj.value = list
     .filter(
       (item: any) =>
-        dayjs(item.title.split(' ')[0]).isAfter(week) && item.result !== 'null'
+        dayjs(item.createdAt).isAfter(week) && item.result !== 'null'
     )
-    .map((item) => item.title.split(' ')[0])
+    .map((item) => dayjs(item.createdAt).format('YYYY-MM-DD'))
     .reduce((acc: any, cur: any) => {
       const key = cur
       acc[key] = acc[key] ? acc[key] + 1 : 1
       return acc
     }, {})
+
   weekData.value = Object.keys(weekDataObj.value).map((key) => ({
     value: weekDataObj.value[key],
     name: key
@@ -80,30 +82,28 @@ async function getLocalRecord() {
 
 // 读取本地记录数据
 getLocalRecord()
-
-console.log('✨  ~ todayData ~ todayData:', todayData.value)
 </script>
 
 <template>
   <div style="padding: 24px; height: calc(100vh - 48px - 64px)">
     <n-grid :x-gap="12" :y-gap="8" :cols="2" style="height: 100%">
       <n-grid-item>
-        <n-card style="height: 100%">
+        <n-card style="height: calc((100vh - 64px - 48px - 12px) / 2)">
           <PieChart :data="todayData" />
         </n-card>
       </n-grid-item>
       <n-grid-item>
-        <n-card style="height: 100%">
+        <n-card style="height: calc((100vh - 64px - 48px - 12px) / 2)">
           <BarChart :data="todayData" />
         </n-card>
       </n-grid-item>
       <n-grid-item>
-        <n-card style="height: 100%">
+        <n-card style="height: calc((100vh - 64px - 48px - 12px) / 2)">
           <LineChart :data="weekData" />
         </n-card>
       </n-grid-item>
       <n-grid-item>
-        <n-card style="height: 100%">
+        <n-card style="height: calc((100vh - 64px - 48px - 12px) / 2)">
           <n-h2 prefix="bar">{{ emotion?.emotion }}情绪的调整建议</n-h2>
           <EmotionAdvice
             :advice-list="

@@ -24,7 +24,8 @@
     "vue": "^3.3.11",
     "vue-echarts": "^6.7.2",
     "vue-i18n": "9",
-    "vue-router": "^4.2.5"
+    "vue-router": "^4.2.5",
+    "wavesurfer.js": "^7.7.15"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.0",

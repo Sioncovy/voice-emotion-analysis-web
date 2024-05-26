@@ -9,6 +9,7 @@ import { calcFileSize } from '../utils'
 import { analysis } from '@/apis'
 import { useStore } from '@/store'
 import Recorder from 'js-audio-recorder'
+import WaveSurfer from 'wavesurfer.js'
 
 const store = useStore()
 
@@ -18,6 +19,8 @@ const record = ref<RecordType | null>(null)
 
 const mode = ref<Mode>(Mode.File)
 const recordStatus = ref<RecordStatus>(RecordStatus.Init)
+
+// const wavesurfer = ref<WaveSurfer | null>(null)
 
 const recorder = new Recorder({
   sampleBits: 16, // 采样位数，支持 8 或 16，默认是16
@@ -44,6 +47,20 @@ const audioUrl = computed(() => {
   if (audio.value === null) return ''
   return URL.createObjectURL(audio.value)
 })
+const audioRef = ref<HTMLAudioElement | null>(null)
+
+watch(
+  () => audioRef.value,
+  (newAudio) => {
+    if (newAudio === null) return
+    const wavesurfer = WaveSurfer.create({
+      container: '#audioArea',
+      waveColor: '#11bb99',
+      progressColor: '#8888cc',
+      media: newAudio // <- this is the important part
+    })
+  }
+)
 
 const result = ref<Emotion>(Emotion.NULL)
 const resultLoading = ref(false)
@@ -203,7 +220,15 @@ const completeRecord = async () => {
             {{ recordStatus === RecordStatus.Record ? '停止录音' : '开始录音' }}
           </n-button>
         </div>
-        <audio v-if="audio" style="width: 100%" controls :src="audioUrl" />
+        <div id="audioArea">
+          <audio
+            ref="audioRef"
+            v-if="audio"
+            style="width: 100%"
+            controls
+            :src="audioUrl"
+          />
+        </div>
 
         <n-button
           v-if="audio"
